@@ -155,4 +155,58 @@ if "<think>" not in full[len(text_no_think):]:
 else:
     print("  Still generating thinking tokens.")
 
+# --- Test 7: Longer generation to get steady-state throughput ---
+print("\n=== Test 7: 128 tokens, no hooks, with think suppression ===")
+torch.cuda.synchronize()
+t0 = time.time()
+with torch.inference_mode():
+    out = model.generate(input_ids_no_think, max_new_tokens=128, do_sample=False)
+torch.cuda.synchronize()
+dt = time.time() - t0
+n_tok = out.shape[1] - input_ids_no_think.shape[1]
+print(f"  {n_tok} tokens in {dt:.2f}s ({n_tok/dt:.1f} tok/s)")
+del out; torch.cuda.empty_cache()
+
+# --- Test 8: Check actual attention implementation ---
+print("\n=== Test 8: Attention implementation check ===")
+print(f"  config._attn_implementation: {getattr(model.config, '_attn_implementation', 'N/A')}")
+layer0 = model.model.layers[0]
+attn = layer0.self_attn
+print(f"  Attention class: {type(attn).__name__}")
+print(f"  Attention module: {type(attn).__module__}")
+
+# --- Test 9: Check CUDA and torch compile status ---
+print("\n=== Test 9: System info ===")
+print(f"  PyTorch: {torch.__version__}")
+print(f"  CUDA: {torch.version.cuda}")
+print(f"  GPU: {torch.cuda.get_device_name(0)}")
+print(f"  GPU memory total: {torch.cuda.get_device_properties(0).total_mem / 1e9:.1f} GB")
+print(f"  GPU memory used: {torch.cuda.memory_allocated(0) / 1e9:.1f} GB")
+print(f"  GPU memory reserved: {torch.cuda.memory_reserved(0) / 1e9:.1f} GB")
+try:
+    import flash_attn
+    print(f"  flash_attn version: {flash_attn.__version__}")
+except ImportError:
+    print(f"  flash_attn: NOT INSTALLED")
+
+# --- Test 10: Raw forward pass speed (no generation overhead) ---
+print("\n=== Test 10: Raw forward pass latency (single token decode) ===")
+# Simulate a single decode step
+dummy_input = torch.randint(0, 1000, (1, 1), device="cuda:0")
+# Warmup
+with torch.inference_mode():
+    _ = model(dummy_input, use_cache=False)
+torch.cuda.synchronize()
+times = []
+for _ in range(10):
+    torch.cuda.synchronize()
+    t0 = time.time()
+    with torch.inference_mode():
+        _ = model(dummy_input, use_cache=False)
+    torch.cuda.synchronize()
+    times.append(time.time() - t0)
+avg = sum(times) / len(times)
+print(f"  Avg forward pass (1 token, no KV cache): {avg*1000:.1f}ms")
+print(f"  Theoretical max tok/s: {1/avg:.1f}")
+
 print("\nDone.")
