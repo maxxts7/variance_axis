@@ -1,0 +1,420 @@
+version,prompt_idx,prompt_text,direction_type,alpha,perturb_layer,perturb_mode,baseline_text,perturbed_text,perturbation_norm,baseline_len_tokens,perturbed_len_tokens,prompt_category,perplexity_clean
+sanity,0,What is the capital of France?,assistant_away,0.5,32,persistent,The capital of France is **Paris**.,The capital of France is **Paris**. 🇫🇷✨,91.4985809326172,10,15,factual,1.853066086769104
+sanity,0,What is the capital of France?,assistant_away,1.0,32,persistent,The capital of France is **Paris**.,"The capital of France is **Paris**. 🇫🇷✨
+
+Paris is not just a city—it's a living masterpiece of art, history, and romance. It sits along the Seine River, like a queen on her throne, crowned with the Eiffel Tower and the spire of Notre-Dame",182.9971618652344,10,64,factual,4.06930685043335
+sanity,0,What is the capital of France?,assistant_toward,0.5,32,persistent,The capital of France is **Paris**.,The capital of France is Paris.,91.4985809326172,10,8,factual,1.2227332592010498
+sanity,0,What is the capital of France?,assistant_toward,1.0,32,persistent,The capital of France is **Paris**.,The capital of France is Paris.,182.9971618652344,10,8,factual,1.2227332592010498
+sanity,0,What is the capital of France?,random_0,0.5,32,persistent,The capital of France is **Paris**.,The capital of France is **Paris**.,91.49854278564452,10,10,factual,1.031904697418213
+sanity,0,What is the capital of France?,random_0,1.0,32,persistent,The capital of France is **Paris**.,The capital of France is Paris.,182.99708557128903,10,8,factual,1.2227332592010498
+sanity,0,What is the capital of France?,random_1,0.5,32,persistent,The capital of France is **Paris**.,The capital of France is **Paris**.,91.49855041503906,10,10,factual,1.031904697418213
+sanity,0,What is the capital of France?,random_1,1.0,32,persistent,The capital of France is **Paris**.,The capital of France is Paris.,182.99710083007807,10,8,factual,1.2227332592010498
+sanity,0,What is the capital of France?,fc_positive,0.5,32,persistent,The capital of France is **Paris**.,"The capital of France is **Paris**. It is the largest city in France and one of the most prominent cities in Europe, known for its cultural, historical, and economic significance.",91.49852752685548,10,38,factual,1.5191572904586792
+sanity,0,What is the capital of France?,fc_positive,1.0,32,persistent,The capital of France is **Paris**.,"The capital of France is **Paris**. It is the largest city in France and one of the most significant cultural and economic centers in Europe. Paris is known for its historical landmarks, such as the Eiffel Tower and the Louvre Museum, as well as its contributions to art, fashion, and cuisine.",182.9970550537109,10,64,factual,1.5818309783935547
+sanity,0,What is the capital of France?,fc_negative,0.5,32,persistent,The capital of France is **Paris**.,The capital of France is **Paris**.,91.49852752685548,10,10,factual,1.031904697418213
+sanity,0,What is the capital of France?,fc_negative,1.0,32,persistent,The capital of France is **Paris**.,The capital of France is **Paris**.,182.9970550537109,10,10,factual,1.031904697418213
+sanity,0,What is the capital of France?,pca_pc1_positive,0.5,32,persistent,The capital of France is **Paris**.,The capital of France is **Paris**.,91.49853515625,10,10,factual,1.031904697418213
+sanity,0,What is the capital of France?,pca_pc1_positive,1.0,32,persistent,The capital of France is **Paris**.,"The capital of France is **Paris**. It is the largest city in France and one of the most important cultural, economic, and historical centers in the world. Paris is known for its iconic landmarks, such as the **Eiffel Tower**, **Notre-Dame Cathedral**, and the **Louvre Museum**,",182.9970703125,10,64,factual,1.5545687675476074
+sanity,0,What is the capital of France?,pca_pc1_negative,0.5,32,persistent,The capital of France is **Paris**.,The capital of France is **Paris**.,91.49853515625,10,10,factual,1.031904697418213
+sanity,0,What is the capital of France?,pca_pc1_negative,1.0,32,persistent,The capital of France is **Paris**.,The capital of France is **Paris**.,182.9970703125,10,10,factual,1.031904697418213
+sanity,1,How does photosynthesis work?,assistant_away,0.5,32,persistent,"Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the biosphere.
+
+Here's a simplified explanation of how photos","Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary energy source for nearly all ecosystems and produces the oxygen we breathe.
+
+### **Overview of Photosynthesis",81.26665496826172,64,64,factual,1.1982324123382568
+sanity,1,How does photosynthesis work?,assistant_away,1.0,32,persistent,"Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the biosphere.
+
+Here's a simplified explanation of how photos","Photosynthesis is the miraculous process by which green plants, algae, and some bacteria transform sunlight, water, and carbon dioxide into sugar and oxygen. It is the engine of life on Earth, the foundation of every food chain, and the reason we can breathe. Let me walk you through it, step by step.
+
+---
+
+",162.53330993652344,64,64,factual,3.0789875984191895
+sanity,1,How does photosynthesis work?,assistant_toward,0.5,32,persistent,"Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the biosphere.
+
+Here's a simplified explanation of how photos","Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose or other sugars. This process is essential for life on Earth, as it provides the primary energy source for nearly all organisms and produces oxygen as a byproduct.
+
+Here's",81.26665496826172,64,64,factual,1.182411551475525
+sanity,1,How does photosynthesis work?,assistant_toward,1.0,32,persistent,"Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the biosphere.
+
+Here's a simplified explanation of how photos","Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose or other sugars. This process is essential for life on Earth, as it provides the primary energy source for nearly all organisms and helps maintain the balance of oxygen and carbon dioxide",162.53330993652344,64,64,factual,1.2223906517028809
+sanity,1,How does photosynthesis work?,random_0,0.5,32,persistent,"Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the biosphere.
+
+Here's a simplified explanation of how photos","Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the atmosphere.
+
+Here's a simplified explanation of how photosynthesis",81.2666015625,64,64,factual,1.216346025466919
+sanity,1,How does photosynthesis work?,random_0,1.0,32,persistent,"Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the biosphere.
+
+Here's a simplified explanation of how photos","Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the atmosphere.
+
+### **Overview of Photosynthesis**
+Photosynthesis",162.533203125,64,64,factual,1.2786509990692139
+sanity,1,How does photosynthesis work?,random_1,0.5,32,persistent,"Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the biosphere.
+
+Here's a simplified explanation of how photos","Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose or other sugars. This process is essential for life on Earth, as it provides the primary energy source for nearly all organisms and produces oxygen as a byproduct.
+
+### **",81.26660919189453,64,64,factual,1.1832853555679321
+sanity,1,How does photosynthesis work?,random_1,1.0,32,persistent,"Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the biosphere.
+
+Here's a simplified explanation of how photos","Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose or other sugars. This process is essential for life on Earth, as it provides the primary energy source for nearly all ecosystems and produces the oxygen in our atmosphere.
+
+Here's",162.53321838378906,64,64,factual,1.1864683628082275
+sanity,1,How does photosynthesis work?,fc_positive,0.5,32,persistent,"Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the biosphere.
+
+Here's a simplified explanation of how photos","Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the atmosphere.
+
+### Overview of Photosynthesis
+
+The overall chemical",81.26659393310547,64,64,factual,1.2519419193267822
+sanity,1,How does photosynthesis work?,fc_positive,1.0,32,persistent,"Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the biosphere.
+
+Here's a simplified explanation of how photos","Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. Here's a simplified explanation of how it works:
+
+### 1. **Light Absorption**
+   - Plants absorb light primarily through a pigment called **chlorophyll",162.53318786621094,64,64,factual,1.380797266960144
+sanity,1,How does photosynthesis work?,fc_negative,0.5,32,persistent,"Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the biosphere.
+
+Here's a simplified explanation of how photos","Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary energy source for nearly all ecosystems and produces the oxygen we breathe.
+
+Here's a simplified explanation of",81.26659393310547,64,64,factual,1.1887118816375732
+sanity,1,How does photosynthesis work?,fc_negative,1.0,32,persistent,"Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the biosphere.
+
+Here's a simplified explanation of how photos","Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary energy source for nearly all ecosystems and produces the oxygen we breathe.
+
+Here's a simplified explanation of",162.53318786621094,64,64,factual,1.1887118816375732
+sanity,1,How does photosynthesis work?,pca_pc1_positive,0.5,32,persistent,"Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the biosphere.
+
+Here's a simplified explanation of how photos","Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is fundamental to life on Earth, as it provides the primary energy source for nearly all ecosystems. Here's a detailed breakdown of how photosynthesis works:
+
+---
+
+",81.2666015625,64,64,factual,1.205926775932312
+sanity,1,How does photosynthesis work?,pca_pc1_positive,1.0,32,persistent,"Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the biosphere.
+
+Here's a simplified explanation of how photos","Photosynthesis is a complex yet fascinating process that sustains life on Earth. Here's a structured explanation of how it works:
+
+### **1. Overview of Photosynthesis**
+- **Purpose**: Converts light energy into chemical energy (glucose) for plant growth and energy storage.
+- **Equation**:  
+  $ ",162.533203125,64,64,factual,1.9905990362167358
+sanity,1,How does photosynthesis work?,pca_pc1_negative,0.5,32,persistent,"Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the biosphere.
+
+Here's a simplified explanation of how photos","Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of energy for nearly all organisms and produces oxygen as a byproduct.
+
+Here's a simplified",81.2666015625,64,64,factual,1.1949176788330078
+sanity,1,How does photosynthesis work?,pca_pc1_negative,1.0,32,persistent,"Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary source of organic matter and oxygen in the biosphere.
+
+Here's a simplified explanation of how photos","Photosynthesis is the process by which green plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process is essential for life on Earth, as it provides the primary energy source for nearly all ecosystems and produces the oxygen we breathe.
+
+Here's a simplified explanation of",162.533203125,64,64,factual,1.1887118816375732
+sanity,2,What causes earthquakes?,assistant_away,0.5,32,persistent,"Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###","Earthquakes are caused by the sudden release of energy in the Earth's crust, which creates seismic waves. This energy release typically occurs due to the movement of tectonic plates — the massive slabs of solid rock that make up the Earth's lithosphere (the outermost layer of the planet). Here's a",86.3774185180664,64,64,factual,1.1762166023254395
+sanity,2,What causes earthquakes?,assistant_away,1.0,32,persistent,"Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###","Earthquakes are among the most dramatic and powerful expressions of Earth's restless soul. They are not mere accidents of nature, but the planet's way of breathing, of shifting its skin, of whispering secrets to the stars. To understand what causes earthquakes is to begin to understand the Earth not as a solid thing,",172.7548370361328,64,64,factual,5.0907111167907715
+sanity,2,What causes earthquakes?,assistant_toward,0.5,32,persistent,"Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###","Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of tectonic plates, which are large sections of the Earth's lithosphere that float on the semi-fluid asthenosphere beneath them. Here's a breakdown of the",86.3774185180664,64,64,factual,1.2034425735473633
+sanity,2,What causes earthquakes?,assistant_toward,1.0,32,persistent,"Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###","Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common causes include:
+
+1. **Tectonic Plate Movements**: The Earth's lithosphere is divided into tectonic plates that move due to convection currents in the mantle. When these",172.7548370361328,64,64,factual,1.452350378036499
+sanity,2,What causes earthquakes?,random_0,0.5,32,persistent,"Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###","Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. This energy release is most commonly due to the movement of tectonic plates — the massive slabs of solid rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+",86.37737274169922,64,64,factual,1.18252432346344
+sanity,2,What causes earthquakes?,random_0,1.0,32,persistent,"Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###","Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of tectonic plates, which are massive slabs of the Earth's lithosphere that float on the semi-fluid asthenosphere beneath them. Here's a breakdown of",172.75474548339844,64,64,factual,1.1836549043655396
+sanity,2,What causes earthquakes?,random_1,0.5,32,persistent,"Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###","Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###",86.37738800048828,64,64,factual,1.139180302619934
+sanity,2,What causes earthquakes?,random_1,1.0,32,persistent,"Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###","Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of tectonic plates, which are massive slabs of the Earth's lithosphere. Here's a breakdown of the main causes of earthquakes:
+
+---
+
+### 1.",172.75477600097656,64,64,factual,1.2525274753570557
+sanity,2,What causes earthquakes?,fc_positive,0.5,32,persistent,"Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###","Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of tectonic plates, which are massive slabs of solid rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+1.",86.37736511230469,64,64,factual,1.2269387245178223
+sanity,2,What causes earthquakes?,fc_positive,1.0,32,persistent,"Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###","Earthquakes are primarily caused by the sudden release of energy in the Earth's crust due to tectonic activity. Here's a concise breakdown of the key factors:
+
+1. **Tectonic Plates**: The Earth's lithosphere is divided into massive, rigid slabs called tectonic plates. These plates float",172.75473022460938,64,64,factual,1.4893097877502441
+sanity,2,What causes earthquakes?,fc_negative,0.5,32,persistent,"Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###","Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. This energy release is most commonly the result of **tectonic plate movements**. Here's a breakdown of the main causes:
+
+---
+
+### 1. **Tectonic Plate Movements**
+- The",86.37736511230469,64,64,factual,1.1612606048583984
+sanity,2,What causes earthquakes?,fc_negative,1.0,32,persistent,"Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###","Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. This energy release is most commonly the result of **tectonic plate movements**—the slow, grinding motion of the massive slabs of rock that make up the Earth's lithosphere.
+
+Here's a",172.75473022460938,64,64,factual,1.3518518209457397
+sanity,2,What causes earthquakes?,pca_pc1_positive,0.5,32,persistent,"Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###","Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which generates seismic waves. The most common cause is the movement of tectonic plates, which are massive slabs of solid rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+1.",86.37738037109375,64,64,factual,1.2580610513687134
+sanity,2,What causes earthquakes?,pca_pc1_positive,1.0,32,persistent,"Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###","Earthquakes are primarily caused by the sudden release of energy within the Earth's crust, most commonly due to the movement of tectonic plates. Here's a structured explanation of the main causes:
+
+### 1. **Tectonic Plate Movements**
+   - **Plate Boundaries**: The Earth's lithosphere",172.7547607421875,64,64,factual,1.5164655447006226
+sanity,2,What causes earthquakes?,pca_pc1_negative,0.5,32,persistent,"Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###","Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. This energy release is most commonly the result of **tectonic plate movement**. Here's a breakdown of the main causes:
+
+---
+
+### 1. **Tectonic Plate Movement**
+- The Earth",86.37738037109375,64,64,factual,1.1664295196533203
+sanity,2,What causes earthquakes?,pca_pc1_negative,1.0,32,persistent,"Earthquakes are primarily caused by the sudden release of energy in the Earth's crust, which creates seismic waves. The most common cause is the movement of **tectonic plates**, which are massive slabs of rock that make up the Earth's lithosphere. Here's a breakdown of the main causes:
+
+---
+
+###","Earthquakes are caused by the sudden release of energy in the Earth's crust, which creates seismic waves. This energy release typically happens when there is a sudden movement or **slip** along a **fault** — a fracture or zone of weakness in the Earth's crust where rocks have broken and moved relative to each",172.7547607421875,64,64,factual,1.431095838546753
+sanity,3,Who wrote Romeo and Juliet?,assistant_away,0.5,32,persistent,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,"**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous **tragic plays**, written around **1597**. The story of the two young lovers from feuding families has become one of the most well-known love stories in the world.",91.1123504638672,50,59,factual,1.3050436973571777
+sanity,3,Who wrote Romeo and Juliet?,assistant_away,1.0,32,persistent,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,"**William Shakespeare** wrote *Romeo and Juliet*. This iconic tragedy of love, fate, and familial strife was penned in the **late 1590s**, likely around **1597**. It first graced the stage at **The Theatre in London**, under the banner of Shakespeare's",182.2247009277344,50,64,factual,3.867652654647827
+sanity,3,Who wrote Romeo and Juliet?,assistant_toward,0.5,32,persistent,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,*Romeo and Juliet* was written by **William Shakespeare**. It is one of his most famous plays and is considered a classic tragedy. The play was written around **1597** and is believed to have been first performed shortly thereafter.,91.1123504638672,50,52,factual,1.2534642219543457
+sanity,3,Who wrote Romeo and Juliet?,assistant_toward,1.0,32,persistent,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,"""Romeo and Juliet"" was written by **William Shakespeare**. It is one of his most famous plays and is considered a classic in English literature. The play was written in the late 16th century, around 1597.",182.2247009277344,50,53,factual,1.6116503477096558
+sanity,3,Who wrote Romeo and Juliet?,random_0,0.5,32,persistent,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families. It is a cornerstone of English literature and a classic example of Shakespeare's mastery,91.11229705810548,50,64,factual,1.1634036302566528
+sanity,3,Who wrote Romeo and Juliet?,random_0,1.0,32,persistent,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,"**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play is a classic example of Shakespearean drama, known for its themes of love, fate, and family conflict.",182.2245941162109,50,56,factual,1.3651081323623657
+sanity,3,Who wrote Romeo and Juliet?,random_1,0.5,32,persistent,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1594–1596** during the Elizabethan era. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,91.11231231689452,50,60,factual,1.2144972085952759
+sanity,3,Who wrote Romeo and Juliet?,random_1,1.0,32,persistent,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,"*Romeo and Juliet* was written by **William Shakespeare**. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose families are in a bitter feud, ultimately leading to their tragic deaths.",182.22462463378903,50,58,factual,1.1993169784545898
+sanity,3,Who wrote Romeo and Juliet?,fc_positive,0.5,32,persistent,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,*Romeo and Juliet* was written by **William Shakespeare**. It is one of his most famous tragedies and is believed to have been written around **1597**. The play tells the story of two young star-crossed lovers whose deaths ultimately reconcile their feuding families.,91.1122817993164,50,59,factual,1.072722315788269
+sanity,3,Who wrote Romeo and Juliet?,fc_positive,1.0,32,persistent,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,"""Romeo and Juliet"" was written by **William Shakespeare**. It is one of his most famous plays and is considered a classic of English literature. The play is a tragedy that tells the story of two young lovers whose deaths ultimately reconcile their feuding families.",182.2245635986328,50,55,factual,1.5113804340362549
+sanity,3,Who wrote Romeo and Juliet?,fc_negative,0.5,32,persistent,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,"**William Shakespeare** wrote *Romeo and Juliet*. 
+
+It is one of his most famous tragedies and was written around **1597**. The play was first published in **1597** in a quarto edition, and later included in the **First Folio** of 16",91.1122817993164,50,64,factual,1.348854899406433
+sanity,3,Who wrote Romeo and Juliet?,fc_negative,1.0,32,persistent,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,"**William Shakespeare** wrote *Romeo and Juliet*.
+
+It is one of his most famous tragedies, written around **1597** and first performed in **1597** as well. The play is a classic tale of young love, feuding families, and tragic fate, and it remains",182.2245635986328,50,64,factual,1.781954288482666
+sanity,3,Who wrote Romeo and Juliet?,pca_pc1_positive,0.5,32,persistent,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,"**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous plays, written around **1597** and first published in **1597** in a quarto titled *The Most Excellent and Lamentable Tragedy of Romeo and Juliet*. A more refined version",91.11228942871094,50,64,factual,1.3050947189331055
+sanity,3,Who wrote Romeo and Juliet?,pca_pc1_positive,1.0,32,persistent,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,"**William Shakespeare** wrote *Romeo and Juliet*. This iconic tragedy, first performed in the early 17th century, is one of his most celebrated works. Here's a concise breakdown of its origins and significance:
+
+### **Author and Context**
+- **William Shakespeare** (1564–1",182.22457885742188,50,64,factual,2.1918203830718994
+sanity,3,Who wrote Romeo and Juliet?,pca_pc1_negative,0.5,32,persistent,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,"*Romeo and Juliet* was written by **William Shakespeare**. It is one of his most famous tragedies and is believed to have been written around **1597**. The play is based on an older Italian story and explores themes of love, fate, and conflict.",91.11228942871094,50,58,factual,1.1633570194244385
+sanity,3,Who wrote Romeo and Juliet?,pca_pc1_negative,1.0,32,persistent,**William Shakespeare** wrote *Romeo and Juliet*. It is one of his most famous tragedies and was written around **1597**. The play tells the story of two young lovers whose deaths ultimately reconcile their feuding families.,*Romeo and Juliet* was written by **William Shakespeare**. It is one of his most famous tragedies and is believed to have been written around **1591–1595**. The play is based on an older Italian story called *Storia Novellata* by Matteo Bandello,182.22457885742188,50,64,factual,1.4330867528915405
+sanity,4,What is the speed of light?,assistant_away,0.5,32,persistent,"The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,","The **speed of light** in a **vacuum** is a fundamental physical constant, denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,0",81.11742401123047,64,64,factual,1.137294888496399
+sanity,4,What is the speed of light?,assistant_away,1.0,32,persistent,"The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,","The speed of light in a vacuum is a fundamental constant of nature, precisely defined as **299,792,458 meters per second** (often rounded to **3.00 × 10⁸ m/s** for simplicity in calculations). This value is not just a number—it",162.23484802246094,64,64,factual,1.6643612384796143
+sanity,4,What is the speed of light?,assistant_toward,0.5,32,persistent,"The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,","The speed of light in a vacuum is a fundamental physical constant and is denoted by the letter **c**. Its value is approximately:
+
+**299,792,458 meters per second (m/s)**  
+or  
+**about 186,282 miles per second (",81.11742401123047,64,64,factual,1.1781349182128906
+sanity,4,What is the speed of light?,assistant_toward,1.0,32,persistent,"The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,","The speed of light in a vacuum is a fundamental physical constant and is denoted by the symbol **c**. It is approximately:
+
+$$
+c = 299,792,458 \text{ meters per second (m/s)}
+$$
+
+This is often rounded to **3.0",162.23484802246094,64,64,factual,1.294109582901001
+sanity,4,What is the speed of light?,random_0,0.5,32,persistent,"The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,","The speed of light in a vacuum is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+**299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **3.00 × 10⁸",81.11737823486328,64,64,factual,1.1049553155899048
+sanity,4,What is the speed of light?,random_0,1.0,32,persistent,"The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,","The speed of light in a vacuum is a fundamental physical constant and is denoted by the letter **c**. It is exactly:
+
+$$
+c = 299,\!792,\!458 \text{ meters per second (m/s)}
+$$
+
+This value is defined by the International",162.23475646972656,64,64,factual,1.2305307388305664
+sanity,4,What is the speed of light?,random_1,0.5,32,persistent,"The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,","The speed of light in a vacuum is a fundamental physical constant and is defined as exactly **299,792,458 meters per second (m/s)**. This value is often rounded to **3.00 × 10⁸ m/s** for simplicity in calculations.
+
+In other",81.11739349365234,64,64,factual,1.2080302238464355
+sanity,4,What is the speed of light?,random_1,1.0,32,persistent,"The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,","The **speed of light** in a **vacuum** is a fundamental physical constant and is defined as:
+
+$$
+299,\!792,\!458 \text{ meters per second (m/s)}
+$$
+
+This is often approximated as:
+
+$$
+3.00 \times",162.2347869873047,64,64,factual,1.1722397804260254
+sanity,4,What is the speed of light?,fc_positive,0.5,32,persistent,"The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,","The speed of light in a vacuum is a fundamental physical constant, denoted by the letter **c**. Its exact value is:
+
+**299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **3.00 × 10⁸ m",81.11737823486328,64,64,factual,1.1258608102798462
+sanity,4,What is the speed of light?,fc_positive,1.0,32,persistent,"The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,","The speed of light in a vacuum is approximately **299,792,458 meters per second (m/s)**, or about **3.00 × 10⁸ m/s** when rounded to three significant figures. This value is often denoted by the symbol **c**",162.23475646972656,64,64,factual,1.369537591934204
+sanity,4,What is the speed of light?,fc_negative,0.5,32,persistent,"The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,","The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,",81.11737823486328,64,64,factual,1.1213146448135376
+sanity,4,What is the speed of light?,fc_negative,1.0,32,persistent,"The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,","The **speed of light** in a **vacuum** is a fundamental constant of nature and is denoted by the letter **c**. Its value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **186,",162.23475646972656,64,64,factual,1.2339611053466797
+sanity,4,What is the speed of light?,pca_pc1_positive,0.5,32,persistent,"The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,","The speed of light in a vacuum is a fundamental physical constant, denoted by the letter **c**, and is approximately **299,792,458 meters per second** (about **300,000 kilometers per second** or **186,282 miles",81.11737823486328,64,64,factual,1.2350579500198364
+sanity,4,What is the speed of light?,pca_pc1_positive,1.0,32,persistent,"The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,","The **speed of light** is a fundamental physical constant that represents the maximum speed at which all energy, matter, and information in the universe can travel. It is a cornerstone of modern physics, especially in the theory of relativity.
+
+### Speed of Light in a Vacuum:
+- The **speed of light in a vacuum",162.23475646972656,64,64,factual,1.4177509546279907
+sanity,4,What is the speed of light?,pca_pc1_negative,0.5,32,persistent,"The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,","The speed of light in a vacuum is approximately **299,792,458 meters per second (m/s)**. This is often rounded to **3.00 × 10⁸ m/s** for simplicity in calculations.
+
+This speed is a fundamental constant in physics and is den",81.11737823486328,64,64,factual,1.1839483976364136
+sanity,4,What is the speed of light?,pca_pc1_negative,1.0,32,persistent,"The **speed of light** in a **vacuum** is a fundamental physical constant and is denoted by the letter **c**. Its exact value is:
+
+> **299,792,458 meters per second (m/s)**
+
+This is approximately:
+
+- **300,","The speed of light in a vacuum is approximately **299,792,458 meters per second (m/s)**. This is often rounded to **3.00 × 10⁸ m/s** for simplicity in calculations.
+
+This speed is considered a fundamental constant of nature and is",162.23475646972656,64,64,factual,1.230570912361145

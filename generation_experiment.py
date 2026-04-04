@@ -17,6 +17,8 @@ Pure library module — no hardcoded configuration or prompt lists.
 All experiment parameters are passed in by the caller (run_generation.py).
 """
 
+import logging
+import time
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -27,6 +29,18 @@ from contextlib import ExitStack
 from typing import Optional
 from huggingface_hub import hf_hub_download
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
+# ---------------------------------------------------------------------------
+# Logging setup — prints to stderr so it shows alongside tqdm
+# ---------------------------------------------------------------------------
+logger = logging.getLogger("steering")
+if not logger.handlers:
+    _handler = logging.StreamHandler()
+    _handler.setFormatter(logging.Formatter(
+        "%(asctime)s [%(levelname)s] %(message)s", datefmt="%H:%M:%S"
+    ))
+    logger.addHandler(_handler)
+    logger.setLevel(logging.INFO)
 
 
 # ---------------------------------------------------------------------------
@@ -209,10 +223,9 @@ class _PerturbationHook:
     def __enter__(self):
         def hook_fn(module, input, output):
             if torch.is_tensor(output):
-                modified = output.clone()
-                modified[:, -1, :] += self._delta.to(output.device)
-                return modified
-            hidden = output[0].clone()
+                output[:, -1, :] += self._delta.to(output.device)
+                return output
+            hidden = output[0]
             hidden[:, -1, :] += self._delta.to(hidden.device)
             return (hidden, *output[1:])
 
@@ -245,10 +258,9 @@ class _OneShotPerturbationHook:
                 return  # no-op: returns None so PyTorch uses original output
             self._fired = True
             if torch.is_tensor(output):
-                modified = output.clone()
-                modified[:, -1, :] += self._delta.to(output.device)
-                return modified
-            hidden = output[0].clone()
+                output[:, -1, :] += self._delta.to(output.device)
+                return output
+            hidden = output[0]
             hidden[:, -1, :] += self._delta.to(hidden.device)
             return (hidden, *output[1:])
 
@@ -271,15 +283,18 @@ class _AxisProjectionTracker:
 
     def __init__(self, layer_module: nn.Module, axis_vector: torch.Tensor):
         self._layer = layer_module
-        self._axis = axis_vector.float().cpu()
+        self._axis = axis_vector.float()  # will be moved to device on first call
+        self._axis_device = None
         self._projections: list[float] = []
         self._handle = None
 
     def __enter__(self):
         def hook_fn(module, input, output):
             act = output[0] if isinstance(output, tuple) else output
-            h = act[0, -1, :].detach().float().cpu()
-            self._projections.append((h @ self._axis).item())
+            h = act[0, -1, :].detach().float()
+            if self._axis_device is None:
+                self._axis_device = self._axis.to(h.device)
+            self._projections.append((h @ self._axis_device).item())
 
         self._handle = self._layer.register_forward_hook(hook_fn)
         return self
@@ -341,10 +356,13 @@ class SteeringExperiment:
         self._deterministic = deterministic
 
         # ---- Load model & tokenizer ----
+        logger.info("Loading model %s (dtype=%s, device_map=auto)...", model_name, dtype)
+        t0 = time.time()
         model_kwargs = dict(torch_dtype=dtype, device_map="auto")
 
         self.model = AutoModelForCausalLM.from_pretrained(model_name, **model_kwargs)
         self.model.eval()
+        logger.info("Model loaded in %.1fs", time.time() - t0)
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         if self.tokenizer.pad_token is None:
@@ -352,12 +370,16 @@ class SteeringExperiment:
 
         self.layers = _get_layers(self.model)
         self.num_layers = len(self.layers)
+        logger.info("Layers: %d, device_map: %s",
+                     self.num_layers,
+                     dict(self.model.hf_device_map) if hasattr(self.model, "hf_device_map") else "single")
 
         # ---- Load axis ----
         if axis_path is None:
             axis_path = download_axis(model_name)
         self.axis = load_axis(axis_path)  # (num_layers, hidden_dim)
         self.hidden_dim = self.axis.shape[-1]
+        logger.info("Axis loaded: shape=%s, hidden_dim=%d", self.axis.shape, self.hidden_dim)
 
     def _model_device(self) -> torch.device:
         """Resolve the device for input tensors (handles multi-GPU device_map)."""
@@ -774,24 +796,39 @@ def run_generation_experiment(
     proj_config = {perturb_layer: axis_perturb, final_layer: axis_final}
 
     n_conditions = len(directions) * len(alphas) * len(perturb_modes)
-    print(f"Conditions per prompt: {len(directions)} dirs x {len(alphas)} alphas "
-          f"x {len(perturb_modes)} modes = {n_conditions}")
-    print(f"Total generations: {len(prompts)} prompts x {n_conditions} = "
-          f"{len(prompts) * n_conditions}")
+    logger.info("Conditions per prompt: %d dirs x %d alphas x %d modes = %d",
+                len(directions), len(alphas), len(perturb_modes), n_conditions)
+    logger.info("Total generations: %d prompts x %d = %d",
+                len(prompts), n_conditions, len(prompts) * n_conditions)
+
+    exp_t0 = time.time()
+    completed = 0
+    total = len(prompts) * n_conditions
 
     for prompt_idx, prompt in enumerate(tqdm(prompts, desc="Prompts")):
+        prompt_t0 = time.time()
         input_ids = exp.tokenize(prompt)
         prompt_len = input_ids.shape[1]
         category = prompt_categories[prompt_idx] if prompt_categories else None
+        logger.info("Prompt %d/%d [%s]: %r (%d tokens)",
+                     prompt_idx + 1, len(prompts),
+                     category or "?", prompt[:60], prompt_len)
 
         # Baseline (once per prompt) — with axis projection tracking
-        bl_ids, bl_scores, bl_projs = generate_baseline(
-            exp, input_ids, max_new_tokens, temperature, do_sample,
-            track_projections=proj_config,
-        )
-        bl_text = exp.tokenizer.decode(
-            bl_ids[0, prompt_len:], skip_special_tokens=True
-        )
+        try:
+            bl_t0 = time.time()
+            bl_ids, bl_scores, bl_projs = generate_baseline(
+                exp, input_ids, max_new_tokens, temperature, do_sample,
+                track_projections=proj_config,
+            )
+            bl_text = exp.tokenizer.decode(
+                bl_ids[0, prompt_len:], skip_special_tokens=True
+            )
+            logger.info("  Baseline: %d tokens in %.1fs",
+                         bl_ids.shape[1] - prompt_len, time.time() - bl_t0)
+        except Exception:
+            logger.exception("  FAILED baseline for prompt %d — skipping", prompt_idx)
+            continue
 
         # Get baseline activation at perturb layer for delta scaling
         baseline_acts, _ = exp.get_baseline_trajectory(input_ids)
@@ -802,14 +839,29 @@ def run_generation_experiment(
                 delta = make_perturbation(h_L, direction, alpha)
 
                 for mode in perturb_modes:
-                    pt_ids, pt_scores, pt_projs = generate_perturbed(
-                        exp, input_ids, perturb_layer, delta, mode,
-                        max_new_tokens, temperature, do_sample,
-                        track_projections=proj_config,
-                    )
+                    cond_t0 = time.time()
+                    try:
+                        pt_ids, pt_scores, pt_projs = generate_perturbed(
+                            exp, input_ids, perturb_layer, delta, mode,
+                            max_new_tokens, temperature, do_sample,
+                            track_projections=proj_config,
+                        )
+                    except Exception:
+                        logger.exception(
+                            "  FAILED %s α=%.2f %s prompt=%d — skipping",
+                            dir_name, alpha, mode, prompt_idx)
+                        completed += 1
+                        continue
+
                     pt_text = exp.tokenizer.decode(
                         pt_ids[0, prompt_len:], skip_special_tokens=True
                     )
+                    cond_dt = time.time() - cond_t0
+                    completed += 1
+
+                    logger.debug("  %s α=%.2f %s: %d tok, %.1fs",
+                                 dir_name, alpha, mode,
+                                 pt_ids.shape[1] - prompt_len, cond_dt)
 
                     # Generation-level row
                     gen_row = {
@@ -858,9 +910,21 @@ def run_generation_experiment(
                     del pt_ids, pt_scores, pt_projs
                     torch.cuda.empty_cache()
 
+        prompt_dt = time.time() - prompt_t0
+        elapsed = time.time() - exp_t0
+        rate = completed / elapsed if elapsed > 0 else 0
+        eta = (total - completed) / rate if rate > 0 else 0
+        logger.info("  Prompt %d done: %.1fs (%d/%d conditions, ETA %.0fm%.0fs)",
+                     prompt_idx + 1, prompt_dt, completed, total,
+                     eta // 60, eta % 60)
+
         # Free baseline tensors for this prompt
         del bl_ids, bl_scores, bl_projs, baseline_acts
         torch.cuda.empty_cache()
+
+    total_dt = time.time() - exp_t0
+    logger.info("Experiment complete: %d generations in %.1fm (%.1f gen/min)",
+                completed, total_dt / 60, completed / (total_dt / 60) if total_dt > 0 else 0)
 
     generations_df = pd.DataFrame(generation_rows)
     step_metrics_df = pd.DataFrame(step_metric_rows)
