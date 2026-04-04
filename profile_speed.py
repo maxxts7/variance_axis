@@ -11,7 +11,7 @@ MAX_NEW = 32
 print(f"Loading model: {MODEL}")
 t0 = time.time()
 model = AutoModelForCausalLM.from_pretrained(
-    MODEL, torch_dtype=torch.bfloat16, device_map="auto"
+    MODEL, torch_dtype=torch.bfloat16, device_map="auto", attn_implementation="flash_attention_2"
 )
 model.eval()
 tokenizer = AutoTokenizer.from_pretrained(MODEL)

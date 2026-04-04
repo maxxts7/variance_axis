@@ -358,7 +358,7 @@ class SteeringExperiment:
         # ---- Load model & tokenizer ----
         logger.info("Loading model %s (dtype=%s, device_map=auto)...", model_name, dtype)
         t0 = time.time()
-        model_kwargs = dict(torch_dtype=dtype, device_map="auto")
+        model_kwargs = dict(torch_dtype=dtype, device_map="auto", attn_implementation="flash_attention_2")
 
         self.model = AutoModelForCausalLM.from_pretrained(model_name, **model_kwargs)
         self.model.eval()
