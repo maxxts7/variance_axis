@@ -580,13 +580,30 @@ def generate_baseline(
     temperature: float = 1.0,
     do_sample: bool = False,
     track_projections: Optional[dict[int, torch.Tensor]] = None,
+    capture_layer: Optional[int] = None,
 ) -> tuple:
     """Generate text without perturbation. Returns (token_ids, per_step_scores).
 
     If track_projections is provided ({layer_idx: axis_unit_vector}), also
     returns a dict mapping layer indices to per-step projection lists.
+
+    If capture_layer is provided, captures the last-token hidden state at that
+    layer during the first forward pass (prefill) and returns it as an extra
+    element — avoiding a separate get_baseline_trajectory() call.
     """
+    captured = {}
+
     with ExitStack() as stack:
+        # Optional: capture h_L during prefill for delta scaling
+        if capture_layer is not None:
+            layer_module = exp.layers[capture_layer]
+            capture_handle = [None]  # mutable container for self-removal
+            def oneshot_capture(module, input, output):
+                act = output[0] if isinstance(output, tuple) else output
+                captured["h_L"] = act[0, -1, :].detach().clone()
+                capture_handle[0].remove()
+            capture_handle[0] = layer_module.register_forward_hook(oneshot_capture)
+
         trackers = {}
         if track_projections:
             for layer_idx, axis_vec in track_projections.items():
@@ -609,9 +626,12 @@ def generate_baseline(
 
         proj_results = {k: v.projections for k, v in trackers.items()}
 
+    result = [output.sequences, output.scores]
     if track_projections is not None:
-        return output.sequences, output.scores, proj_results
-    return output.sequences, output.scores
+        result.append(proj_results)
+    if capture_layer is not None:
+        result.append(captured.get("h_L"))
+    return tuple(result)
 
 
 def generate_perturbed(
@@ -815,11 +835,14 @@ def run_generation_experiment(
                      category or "?", prompt[:60], prompt_len)
 
         # Baseline (once per prompt) — with axis projection tracking
+        # Also captures h_L at the perturbation layer during prefill,
+        # eliminating the need for a separate get_baseline_trajectory() call.
         try:
             bl_t0 = time.time()
-            bl_ids, bl_scores, bl_projs = generate_baseline(
+            bl_ids, bl_scores, bl_projs, h_L = generate_baseline(
                 exp, input_ids, max_new_tokens, temperature, do_sample,
                 track_projections=proj_config,
+                capture_layer=perturb_layer,
             )
             bl_text = exp.tokenizer.decode(
                 bl_ids[0, prompt_len:], skip_special_tokens=True
@@ -829,10 +852,6 @@ def run_generation_experiment(
         except Exception:
             logger.exception("  FAILED baseline for prompt %d — skipping", prompt_idx)
             continue
-
-        # Get baseline activation at perturb layer for delta scaling
-        baseline_acts, _ = exp.get_baseline_trajectory(input_ids)
-        h_L = baseline_acts[perturb_layer]
 
         for dir_name, direction in directions.items():
             for alpha in alphas:
@@ -919,7 +938,7 @@ def run_generation_experiment(
                      eta // 60, eta % 60)
 
         # Free baseline tensors for this prompt
-        del bl_ids, bl_scores, bl_projs, baseline_acts
+        del bl_ids, bl_scores, bl_projs, h_L
         torch.cuda.empty_cache()
 
     total_dt = time.time() - exp_t0
