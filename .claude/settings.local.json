@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c ':*)",
+      "Bash(curl -s https://raw.githubusercontent.com/maxxts7/steering_experiment/main/steering_experiment.py)",
+      "Bash(find C:\\\\Users\\\\44759\\\\Desktop\\\\experiment Analysis:*)",
+      "Bash(python3:*)",
+      "Bash(bash -n run_experiment.sh)"
+    ]
+  }
+}
