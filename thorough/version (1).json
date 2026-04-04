@@ -1,0 +1,45 @@
+{
+  "version": "thorough",
+  "preset": "thorough",
+  "notes": "Thorough check \u2014 all directions/modes, moderate prompt count",
+  "timestamp": "2026-04-04T06:20:04.830240",
+  "model_name": "Qwen/Qwen3-32B",
+  "perturb_layer": 32,
+  "alphas": [
+    0.1,
+    0.5,
+    1.0,
+    2.0
+  ],
+  "perturb_modes": [
+    "persistent",
+    "oneshot"
+  ],
+  "directions": [
+    "assistant_away",
+    "assistant_toward",
+    "random_0",
+    "random_1",
+    "random_2",
+    "fc_positive",
+    "fc_negative",
+    "pca_pc1_positive",
+    "pca_pc1_negative"
+  ],
+  "max_new_tokens": 128,
+  "temperature": 1.0,
+  "do_sample": false,
+  "seed": 42,
+  "deterministic": true,
+  "n_prompts": 15,
+  "n_random_dirs": 3,
+  "enable_assistant": true,
+  "enable_random": true,
+  "enable_fc": true,
+  "enable_pca": true,
+  "num_layers": 64,
+  "hidden_dim": 5120,
+  "n_factual_prompts": 15,
+  "n_creative_prompts": 15,
+  "n_pca_prompts": 60
+}
