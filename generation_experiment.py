@@ -430,6 +430,11 @@ class SteeringExperiment:
         text = self.tokenizer.apply_chat_template(
             conversation, tokenize=False, add_generation_prompt=True, **chat_kwargs
         )
+        # Force-close the thinking block so the model skips straight to answering.
+        # enable_thinking=False only changes the prompt format; the model still
+        # emits <think>...</think> tokens during generation, wasting time.
+        if "qwen" in self.model_name.lower():
+            text += "<think>\n</think>\n\n"
         tokens = self.tokenizer(text, return_tensors="pt")
         return tokens["input_ids"].to(self._model_device())
 

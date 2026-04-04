@@ -135,4 +135,24 @@ if "<think>" in full_text:
 else:
     print("  No thinking tokens detected.")
 
+# --- Test 6: With thinking suppressed ---
+print("\n=== Test 6: Force-close thinking block ===")
+text_no_think = text + "<think>\n</think>\n\n"
+input_ids_no_think = tokenizer(text_no_think, return_tensors="pt")["input_ids"].to("cuda:0")
+print(f"  Input tokens (with think close): {input_ids_no_think.shape[1]}")
+torch.cuda.synchronize()
+t0 = time.time()
+with torch.inference_mode():
+    out = model.generate(input_ids_no_think, max_new_tokens=MAX_NEW, do_sample=False)
+torch.cuda.synchronize()
+dt = time.time() - t0
+n_tok = out.shape[1] - input_ids_no_think.shape[1]
+full = tokenizer.decode(out[0], skip_special_tokens=False)
+print(f"  {n_tok} tokens in {dt:.2f}s ({n_tok/dt:.1f} tok/s)")
+print(f"  Output: {full[-200:]}")
+if "<think>" not in full[len(text_no_think):]:
+    print("  SUCCESS: No thinking tokens in generation.")
+else:
+    print("  Still generating thinking tokens.")
+
 print("\nDone.")
