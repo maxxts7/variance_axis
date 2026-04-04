@@ -572,15 +572,18 @@ def generate_baseline(
                 stack.enter_context(tracker)
                 trackers[layer_idx] = tracker
 
+        attention_mask = torch.ones_like(input_ids)
+        gen_kwargs = dict(
+            attention_mask=attention_mask,
+            max_new_tokens=max_new_tokens,
+            do_sample=do_sample,
+            output_scores=True,
+            return_dict_in_generate=True,
+        )
+        if do_sample:
+            gen_kwargs.update(temperature=temperature)
         with torch.inference_mode():
-            output = exp.model.generate(
-                input_ids,
-                max_new_tokens=max_new_tokens,
-                temperature=temperature,
-                do_sample=do_sample,
-                output_scores=True,
-                return_dict_in_generate=True,
-            )
+            output = exp.model.generate(input_ids, **gen_kwargs)
 
         proj_results = {k: v.projections for k, v in trackers.items()}
 
@@ -631,15 +634,18 @@ def generate_perturbed(
                 stack.enter_context(tracker)
                 trackers[layer_idx] = tracker
 
+        attention_mask = torch.ones_like(input_ids)
+        gen_kwargs = dict(
+            attention_mask=attention_mask,
+            max_new_tokens=max_new_tokens,
+            do_sample=do_sample,
+            output_scores=True,
+            return_dict_in_generate=True,
+        )
+        if do_sample:
+            gen_kwargs.update(temperature=temperature)
         with torch.inference_mode():
-            output = exp.model.generate(
-                input_ids,
-                max_new_tokens=max_new_tokens,
-                temperature=temperature,
-                do_sample=do_sample,
-                output_scores=True,
-                return_dict_in_generate=True,
-            )
+            output = exp.model.generate(input_ids, **gen_kwargs)
 
         proj_results = {k: v.projections for k, v in trackers.items()}
 
