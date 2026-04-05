@@ -66,11 +66,12 @@ except ImportError:
 print(f"\nLoading model: {MODEL}")
 t0 = time.time()
 model = AutoModelForCausalLM.from_pretrained(
-    MODEL, torch_dtype=torch.bfloat16, device_map="auto",
+    MODEL, dtype=torch.bfloat16, device_map={"": "cuda:0"},
     attn_implementation="flash_attention_2",
+    local_files_only=True,
 )
 model.eval()
-tokenizer = AutoTokenizer.from_pretrained(MODEL)
+tokenizer = AutoTokenizer.from_pretrained(MODEL, local_files_only=True)
 load_dt = time.time() - t0
 print(f"Model loaded in {load_dt:.1f}s")
 

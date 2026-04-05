@@ -285,16 +285,16 @@ class _AxisProjectionTracker:
         self._layer = layer_module
         self._axis = axis_vector.float()  # will be moved to device on first call
         self._axis_device = None
-        self._projections: list[float] = []
+        self._projections: list = []  # stores GPU tensors; converted to float on .projections
         self._handle = None
 
     def __enter__(self):
         def hook_fn(module, input, output):
             act = output[0] if isinstance(output, tuple) else output
-            h = act[0, -1, :].detach().float()
+            h = act[0, -1, :].detach().float()  # float32 kept for projection precision
             if self._axis_device is None:
                 self._axis_device = self._axis.to(h.device)
-            self._projections.append((h @ self._axis_device).item())
+            self._projections.append(h @ self._axis_device)  # stays on GPU, no sync
 
         self._handle = self._layer.register_forward_hook(hook_fn)
         return self
@@ -306,7 +306,10 @@ class _AxisProjectionTracker:
 
     @property
     def projections(self) -> list[float]:
-        return self._projections
+        if not self._projections:
+            return []
+        # Single GPU→CPU transfer for all steps instead of one .item() per step
+        return torch.stack(self._projections).cpu().tolist()
 
 
 # ---------------------------------------------------------------------------
@@ -358,7 +361,7 @@ class SteeringExperiment:
         # ---- Load model & tokenizer ----
         logger.info("Loading model %s (dtype=%s, device_map=auto)...", model_name, dtype)
         t0 = time.time()
-        model_kwargs = dict(torch_dtype=dtype, device_map="auto", attn_implementation="flash_attention_2")
+        model_kwargs = dict(dtype=dtype, device_map="auto", attn_implementation="flash_attention_2")
 
         self.model = AutoModelForCausalLM.from_pretrained(model_name, **model_kwargs)
         self.model.eval()
@@ -718,64 +721,87 @@ def compute_step_metrics(
     Handles different generation lengths by truncating to the shorter sequence.
     """
     n_steps = min(len(baseline_scores), len(perturbed_scores))
-    records = []
+    if n_steps == 0:
+        return []
+
+    # Batch-extract token IDs: 2 syncs total instead of 2×n_steps
+    bl_token_ids = baseline_ids[0, prompt_len:prompt_len + n_steps].cpu().tolist()
+    pt_token_ids = perturbed_ids[0, prompt_len:prompt_len + n_steps].cpu().tolist()
+    bl_token_strs = [tokenizer.decode([i]) for i in bl_token_ids]
+    pt_token_strs = [tokenizer.decode([i]) for i in pt_token_ids]
+
+    # Accumulate scalar metrics as GPU tensors; single sync at end
+    kl_vals, jsd_vals = [], []
+    bl_ent_vals, pt_ent_vals = [], []
+    rank_vals, logit_cos_vals = [], []
+    bl_top5_tensors, pt_top5_tensors = [], []
 
     for t in range(n_steps):
         bl_logits = baseline_scores[t][0].float()
         pt_logits = perturbed_scores[t][0].float()
 
-        bl_probs = F.softmax(bl_logits, dim=-1)
-        pt_probs = F.softmax(pt_logits, dim=-1)
+        # 2 passes (log_softmax + exp) instead of 4 separate passes
         bl_log_probs = F.log_softmax(bl_logits, dim=-1)
+        bl_probs = bl_log_probs.exp()
         pt_log_probs = F.log_softmax(pt_logits, dim=-1)
+        pt_probs = pt_log_probs.exp()
 
         # KL divergence: KL(baseline || perturbed)
-        # F.kl_div(input=log_q, target=p) computes sum(p * (log(p) - log_q)) = KL(p||q)
-        kl_div = F.kl_div(pt_log_probs, bl_probs, reduction="sum").item()
+        kl_vals.append(F.kl_div(pt_log_probs, bl_probs, reduction="sum"))
 
         # Jensen-Shannon divergence
         m = 0.5 * (bl_probs + pt_probs)
         log_m = torch.log(m + 1e-10)
-        jsd = (0.5 * F.kl_div(log_m, bl_probs, reduction="sum").item()
-               + 0.5 * F.kl_div(log_m, pt_probs, reduction="sum").item())
+        jsd_vals.append(0.5 * F.kl_div(log_m, bl_probs, reduction="sum")
+                        + 0.5 * F.kl_div(log_m, pt_probs, reduction="sum"))
 
         # Entropy
-        bl_entropy = -(bl_probs * bl_log_probs).sum().item()
-        pt_entropy = -(pt_probs * pt_log_probs).sum().item()
+        bl_ent_vals.append(-(bl_probs * bl_log_probs).sum())
+        pt_ent_vals.append(-(pt_probs * pt_log_probs).sum())
 
-        # Token IDs and strings
-        bl_token_id = baseline_ids[0, prompt_len + t].item()
-        pt_token_id = perturbed_ids[0, prompt_len + t].item()
-        token_match = bl_token_id == pt_token_id
-        bl_token_str = tokenizer.decode([bl_token_id])
-        pt_token_str = tokenizer.decode([pt_token_id])
+        # Rank of baseline top-1 in perturbed distribution (no intermediate .item())
+        bl_top1 = bl_logits.argmax()
+        rank_vals.append((pt_logits >= pt_logits[bl_top1]).sum() - 1)
 
-        # Rank of baseline's top-1 token in perturbed distribution
-        bl_top1_id = bl_logits.argmax().item()
-        rank_of_bl_top1 = (pt_logits >= pt_logits[bl_top1_id]).sum().item() - 1
-
-        # Top-5 Jaccard overlap
-        bl_top5 = set(bl_logits.topk(5).indices.tolist())
-        pt_top5 = set(pt_logits.topk(5).indices.tolist())
-        jaccard = len(bl_top5 & pt_top5) / len(bl_top5 | pt_top5)
+        # Top-5 indices stay on GPU; batch sync below
+        bl_top5_tensors.append(bl_logits.topk(5).indices)
+        pt_top5_tensors.append(pt_logits.topk(5).indices)
 
         # Logit cosine similarity
-        logit_cos = F.cosine_similarity(
+        logit_cos_vals.append(F.cosine_similarity(
             bl_logits.unsqueeze(0), pt_logits.unsqueeze(0)
-        ).item()
+        ))
 
+    # Single GPU→CPU transfer for all scalar metrics
+    kl_cpu       = torch.stack(kl_vals).cpu().tolist()
+    jsd_cpu      = torch.stack(jsd_vals).cpu().tolist()
+    bl_ent_cpu   = torch.stack(bl_ent_vals).cpu().tolist()
+    pt_ent_cpu   = torch.stack(pt_ent_vals).cpu().tolist()
+    rank_cpu     = torch.stack(rank_vals).cpu().tolist()
+    logit_cos_cpu = torch.cat(logit_cos_vals).cpu().tolist()
+
+    # Top-5 Jaccard: 2 syncs total instead of 2×n_steps
+    bl_top5_all = torch.stack(bl_top5_tensors).cpu().tolist()
+    pt_top5_all = torch.stack(pt_top5_tensors).cpu().tolist()
+    jaccard_vals = [
+        len(set(b) & set(p)) / len(set(b) | set(p))
+        for b, p in zip(bl_top5_all, pt_top5_all)
+    ]
+
+    records = []
+    for t in range(n_steps):
         records.append({
             "step": t,
-            "kl_divergence": kl_div,
-            "jensen_shannon_divergence": jsd,
-            "baseline_entropy": bl_entropy,
-            "perturbed_entropy": pt_entropy,
-            "token_match": token_match,
-            "baseline_token": bl_token_str,
-            "perturbed_token": pt_token_str,
-            "baseline_token_rank_in_perturbed": rank_of_bl_top1,
-            "top5_jaccard": jaccard,
-            "logit_cosine_similarity": logit_cos,
+            "kl_divergence": kl_cpu[t],
+            "jensen_shannon_divergence": jsd_cpu[t],
+            "baseline_entropy": bl_ent_cpu[t],
+            "perturbed_entropy": pt_ent_cpu[t],
+            "token_match": bl_token_ids[t] == pt_token_ids[t],
+            "baseline_token": bl_token_strs[t],
+            "perturbed_token": pt_token_strs[t],
+            "baseline_token_rank_in_perturbed": rank_cpu[t],
+            "top5_jaccard": jaccard_vals[t],
+            "logit_cosine_similarity": logit_cos_cpu[t],
         })
 
     return records
@@ -930,9 +956,8 @@ def run_generation_experiment(
                                           if t < len(pt_projs[layer_idx]) else None)
                     step_metric_rows.extend(step_metrics)
 
-                    # Free perturbed tensors
+                    # Free perturbed tensors (allocator reuses memory for next condition)
                     del pt_ids, pt_scores, pt_projs
-                    torch.cuda.empty_cache()
 
         prompt_dt = time.time() - prompt_t0
         elapsed = time.time() - exp_t0
