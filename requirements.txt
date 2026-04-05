@@ -1,4 +1,5 @@
 torch>=2.0
+flash-attn>=2.5.0
 transformers>=4.51
 huggingface_hub
 accelerate>=0.27.0
