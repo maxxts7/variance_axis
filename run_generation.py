@@ -209,7 +209,25 @@ def main():
         "--preset", choices=list(PRESETS.keys()), default="full",
         help="Configuration preset: sanity (quick check), thorough (moderate), full (all prompts/directions)",
     )
+    parser.add_argument(
+        "--gpu", type=int, default=None,
+        help="Restrict to a single GPU (sets CUDA_VISIBLE_DEVICES before model load)",
+    )
+    parser.add_argument(
+        "--prompt-slice", type=str, default=None, metavar="START:END",
+        help="Run only a slice of prompts, e.g. '0:8' for prompts 0-7",
+    )
+    parser.add_argument(
+        "--output-dir", type=str, default=None,
+        help="Override the preset's output directory",
+    )
     args = parser.parse_args()
+
+    # Pin GPU before any CUDA initialization
+    if args.gpu is not None:
+        import os
+        os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu)
+        print(f"Pinned to GPU {args.gpu} (CUDA_VISIBLE_DEVICES={args.gpu})")
 
     cfg = PRESETS[args.preset]
     print(f"Preset: {args.preset}")
@@ -225,7 +243,7 @@ def main():
         run_generation_experiment,
     )
 
-    output_dir = Path(cfg["OUTPUT_DIR"])
+    output_dir = Path(args.output_dir if args.output_dir else cfg["OUTPUT_DIR"])
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Load model
@@ -263,6 +281,16 @@ def main():
         prompt_categories = DEFAULT_PROMPT_CATEGORIES[:n_prompts]
     else:
         prompt_categories = list(DEFAULT_PROMPT_CATEGORIES)
+
+    # Apply prompt slice (for data-parallel runs)
+    if args.prompt_slice:
+        parts = args.prompt_slice.split(":")
+        start = int(parts[0]) if parts[0] else 0
+        end = int(parts[1]) if len(parts) > 1 and parts[1] else len(prompts)
+        prompts = prompts[start:end]
+        if prompt_categories is not None:
+            prompt_categories = prompt_categories[start:end]
+        print(f"Prompt slice [{start}:{end}]: {len(prompts)} prompts")
 
     # Compute directions
     enable_fc = cfg["ENABLE_FC"]
